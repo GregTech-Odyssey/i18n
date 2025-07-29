@@ -1,0 +1,53 @@
+name: Build and Release Resource Pack
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+permissions:
+  contents: write  # 允许创建 release 和删除 tag
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create resource pack structure
+      run: |
+        # 创建临时打包目录
+        mkdir -p pack_temp
+
+        cp -r resources/* pack_temp/
+
+    - name: Create resource pack zip
+      run: |
+        cd pack_temp
+        zip -r ../gtoi18n.zip .
+        cd ..
+
+    - name: Delete existing release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # 删除现有的release和tag
+        gh release delete gtoi18n --yes || true
+        git push origin --delete gtoi18n || true
+
+    - name: Create new release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # 创建新的release
+        gh release create gtoi18n \
+          --title "GTO i18n Resource Pack" \
+          --notes "Latest GTO internationalization resource pack
+
+          ## 安装方法
+          请查看 GitHub README
+
+          ## Installation
+          Please check the GitHub README" \
+          --latest \
+          gtoi18n.zip
