@@ -16,8 +16,6 @@ jobs:
         # 创建临时打包目录
         mkdir -p pack_temp
 
-        # 复制必要文件到打包目录
-        cp pack.mcmeta pack_temp/
         cp -r resources/* pack_temp/
 
     - name: Create resource pack zip
