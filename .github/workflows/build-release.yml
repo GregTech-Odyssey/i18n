@@ -3,6 +3,9 @@ name: Build and Release Resource Pack
 on:
   workflow_dispatch:  # 允许手动触发
 
+permissions:
+  contents: write  # 允许创建 release 和删除 tag
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
